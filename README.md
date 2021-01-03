@@ -1,4 +1,4 @@
-# Openshift CI/CD for simple Java SpringBoot App with Gradle Build
+# Openshift CI/CD for simple Java SpringBoot App with Gradle
 
 This Project Handle the basic CI/CD of Java application using Gradle   
 
