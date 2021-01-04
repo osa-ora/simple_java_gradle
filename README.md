@@ -26,12 +26,12 @@ oc new-app jenkins-persistent  -n cicd
 oc policy add-role-to-user edit system:serviceaccount:cicd:default -n dev
 oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n dev
 
-oc create -f bc_jenkins_slave.yaml -n cicd //this will add the template to use 
-or you can use it directly from the GitHub: oc process -f https://raw.githubusercontent.com/osa-ora/simple_java_gradle/main/cicd/bc_jenkins_slave.yaml -n cicd | oc create -f -
+oc create -f bc_jenkins_slave_template.yaml -n cicd //this will add the template to use 
+or you can use it directly from the GitHub: oc process -f https://raw.githubusercontent.com/osa-ora/simple_java_gradle/main/cicd/bc_jenkins_slave_template.yaml -n cicd | oc create -f -
 
 Now use the template to create the Jenkins slave template
-oc describe template jenkins-slave //to see the template details
-oc process -p GIT_URL=https://github.com/osa-ora/simple_java_gradle -p GIT_BRANCH=main -p GIT_CONTEXT_DIR=cicd -p DOCKERFILE_PATH=dockerfile_gradle -p IMAGE_NAME=gradle-jenkins-slave jenkins-slave  | oc create -f -
+oc describe template jenkins-slave-template //to see the template details
+oc process -p GIT_URL=https://github.com/osa-ora/simple_java_gradle -p GIT_BRANCH=main -p GIT_CONTEXT_DIR=cicd -p DOCKERFILE_PATH=dockerfile_gradle -p IMAGE_NAME=gradle-jenkins-slave jenkins-slave-template  | oc create -f -
 
 oc start-build gradle-jenkins-slave 
 oc logs bc/gradle-jenkins-slave -f
@@ -39,12 +39,14 @@ oc logs bc/gradle-jenkins-slave -f
 
 
 ## 2) Configure Jenkins 
+In case you completed 1st step before provision Openshift Jenkins, it will auto-detect the slave dotnet image based on the label and annotation and no thing need to be done to configure it, otherwise you can do it manually for existing Jenkins installation
+
 From inside Jenkins --> go to Manage Jenkins ==> Configure Jenkins then scroll to cloud section:
 https://{JENKINS_URL}/configureClouds
-Now click on Pod Templates, add new one with name "gradle", label "gradle", container template name "jnlp", docker image "image-registry.openshift-image-registry.svc:5000/cicd/gradle-jenkins-slave" 
+Now click on Pod Templates, add new one with name "gradle-jenkins-slave", label "gradle-jenkins-slave", container template name "jnlp", docker image "image-registry.openshift-image-registry.svc:5000/cicd/gradle-jenkins-slave" 
 
 See the picture:
-<img width="1325" alt="Screen Shot 2021-01-03 at 15 36 38" src="https://user-images.githubusercontent.com/18471537/103480527-8d613000-4ddd-11eb-84b4-3d589a192ef3.png">
+<img width="1258" alt="Screen Shot 2021-01-04 at 12 42 20" src="https://user-images.githubusercontent.com/18471537/103526980-5432c980-4e8a-11eb-8bb3-c51067b8fa95.png">
 
 ## 3) (Optional) SonarQube on Openshift
 Provision SonarQube for code scanning on Openshift using the attached template.
@@ -69,7 +71,7 @@ pipeline {
 	}
     agent {
     // Using the gradle builder agent
-       label "gradle"
+       label "gradle-jenkins-slave"
     }
   stages {
     stage('Checkout') {
@@ -114,7 +116,7 @@ As you can see this pipeline pick the gradle slave image that we built, note the
 ```
 agent {
     // Using the gradle builder agent
-       label "gradle"
+       label "gradle-jenkins-slave"
     }
 ```
 
@@ -141,6 +143,8 @@ oc new-app ${app_name} --as-deployment-config
 oc expose svc ${app_name} --port=8080 --name=${app_name}
 ```
 This will make sure our project initally deployed and ready for our CI/CD configurations, where proj_name and app_name is Openshift project and application name respectively.
+Note: You need to restrict the execution on gradle-jenkins-slave as well: 
+<img width="598" alt="Screen Shot 2021-01-04 at 12 45 52" src="https://user-images.githubusercontent.com/18471537/103527316-d3280200-4e8a-11eb-94cc-68daf15217df.png">
 
 <img width="1000" alt="Screen Shot 2021-01-03 at 19 10 29" src="https://user-images.githubusercontent.com/18471537/103484421-73344b80-4df7-11eb-967c-cd9042982468.png">
 
