@@ -150,5 +150,57 @@ Note: You need to restrict the execution on gradle-jenkins-slave as well:
 
 <img width="1000" alt="Screen Shot 2021-01-03 at 19 10 29" src="https://user-images.githubusercontent.com/18471537/103484421-73344b80-4df7-11eb-967c-cd9042982468.png">
 
-You can enrich the project and add approvals to deploy to differnet environments as well, all you need is to have the privilages using "oc policy" as we did before and add deploy stage in the pipeline step.
+## 5) Deployment Across Environments
+
+Environments can be another Openshift project in the same Openshift cluster or in anither cluster.
+
+In order to do this for the same cluster, you can enrich the pipeline and add approvals to deploy to a new project, all you need is to have the required privilages using "oc policy" as we did before and add deploy stage in the pipeline script to deploy into this project.
+
+```
+oc project {project_name} //this is new project to use
+oc policy add-role-to-user edit system:serviceaccount:cicd:default -n {project_name}
+oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n {project_name}
+```
+Add more stages to the pipleine scripts like:
+```
+    stage('Deployment to Staging Approval') {
+        steps {
+            timeout(time: 5, unit: 'MINUTES') {
+                input message: 'Proceed with Application Deployment in Staging environment ?', ok: 'Approve Deployment'
+            }
+        }
+    }
+    stage('Deploy To Openshift Staging') {
+      steps {
+        sh "oc project ${staging_proj_name}"
+        sh "oc start-build ${app_name} --from-dir=."
+        sh "oc logs -f bc/${app_name}"
+      }
+    }
+```
+
+Also you can use Openshift plugin and configure different Openshift cluster to automated the deployments across many environments:
+
+```
+stage('preamble') {
+	steps {
+		script {
+			openshift.withCluster() {
+			//could be openshift.withCluster( 'another-cluster' ) {
+				//name references a Jenkins cluster configuration
+				openshift.withProject() { 
+				//coulld be openshift.withProject( 'another-project' ) {
+					//name references a project inside the cluster
+					echo "Using project: ${openshift.project()} in cluster:  ${openshift.cluster()}"
+				}
+			}
+		}
+	}
+}
+```
+And then configure any additonal cluster (other than the default one which running Jenkins) in Openshift Client plugin configuration section:
+
+<img width="1400" alt="Screen Shot 2021-01-05 at 10 24 45" src="https://user-images.githubusercontent.com/18471537/103623100-4b043400-4f40-11eb-90cf-2209e9c4bde2.png">
+
+
 
