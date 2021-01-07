@@ -17,7 +17,9 @@ steps:
     gradle test
     gradle sonarqube -Dsonar.projectKey=gradle2 -Dsonar.host.url=http://sonarqube-a-test2.apps.cluster-c167.c167.sandbox1250.opentlc.com -Dsonar.login=7581b753f490cf810e5ebeb0136e546aa4185fbe
     gradle bootjar
-    task: PublishTestResults@2
-      inputs:
-        testResultsFormat: 'JUnit' # Options: JUnit, NUnit, VSTest, xUnit, cTest
   displayName: 'Run a multi-line script'
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/TEST-*.xml'
+    testRunTitle: 'Publish'
