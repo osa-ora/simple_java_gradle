@@ -31,7 +31,7 @@ oc process -p GIT_URL=https://github.com/osa-ora/simple_java_gradle -p GIT_BRANC
 oc start-build gradle-jenkins-slave 
 oc logs bc/gradle-jenkins-slave -f
 
-oc new-app jenkins-persistent  -n cicd
+oc new-app jenkins-persistent  -p MEMORY_LIMIT=2Gi  -p VOLUME_CAPACITY=4Gi -n cicd
 
 oc project dev //this is project for application development
 oc policy add-role-to-user edit system:serviceaccount:cicd:default -n dev
