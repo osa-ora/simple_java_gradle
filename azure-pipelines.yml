@@ -7,7 +7,7 @@ trigger:
 - main
 
 pool:
-  name: 'Default'
+  name: 'ocp_pool'
 
 steps:
 - script: echo Hello, world!
