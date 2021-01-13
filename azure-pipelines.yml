@@ -72,7 +72,7 @@ steps:
 - script: |
     oc login --token=${{parameters.ocp_token}} --server=${{parameters.ocp_server}} --insecure-skip-tls-verify=true
     oc project ${{parameters.proj_name}}
-    oc start-build ${{parameters.app_name}} --from-dir=.
+    oc start-build ${{parameters.app_name}} --from-dir=build/libs/.
     oc logs -f bc/${{parameters.app_name}}
   displayName: 'Build and Deploy the application on subsequent runs..'
   condition: eq('${{ parameters.firstRun }}', false)
