@@ -21,7 +21,7 @@ parameters:
   type: string
   displayName: 'Openshift Project Name'
 - name: app_name
-  default: 'sample'
+  default: 'sample-gradle'
   type: string
   displayName: 'Openshift Application Name'
 - name: sonar_proj
