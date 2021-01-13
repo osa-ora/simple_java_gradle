@@ -3,6 +3,40 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+parameters:
+- name: firstRun
+  default: false
+  type: boolean
+  displayName: 'First Run of this Pipeline'
+- name: ocp_token
+  default: ''
+  type: string
+  displayName: 'Openshift Auth Token'
+- name: ocp_server
+  default: 'https://api.cluster-894c.894c.sandbox1092.opentlc.com:6443'
+  type: string
+  displayName: 'Openshift Server URL'
+- name: proj_name
+  default: 'dev'
+  type: string
+  displayName: 'Openshift Project Name'
+- name: app_name
+  default: 'sample'
+  type: string
+  displayName: 'Openshift Application Name'
+- name: sonar_proj
+  default: 'dotnet'
+  type: string
+  displayName: 'SonarQube Project'
+- name: sonar_token
+  default: 'token-here'
+  type: string
+  displayName: 'SonarQube Token'
+- name: sonar_url
+  default: 'http://sonarqube....'
+  type: string
+  displayName: 'SonarQube Server URL'
+
 trigger:
 - main
 
@@ -15,11 +49,30 @@ steps:
 
 - script: |
     gradle test
-    gradle sonarqube -Dsonar.projectKey=gradle2 -Dsonar.host.url=http://sonarqube-a-test2.apps.cluster-c167.c167.sandbox1250.opentlc.com -Dsonar.login=7581b753f490cf810e5ebeb0136e546aa4185fbe
+    #gradle sonarqube -Dsonar.projectKey=gradle2 -Dsonar.host.url=http://sonarqube-a-test2.apps.cluster-c167.c167.sandbox1250.opentlc.com -Dsonar.login=7581b753f490cf810e5ebeb0136e546aa4185fbe
     gradle bootjar
-  displayName: 'Run a multi-line script'
+  displayName: 'Build, Scan and Package the application'
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
     testResultsFiles: '**/TEST-*.xml'
     testRunTitle: 'Publish'
+  displayName: 'Publish Test Results'
+
+- script: |
+    oc login --token=${{parameters.ocp_token}} --server=${{parameters.ocp_server}} --insecure-skip-tls-verify=true
+    oc project ${{parameters.proj_name}}
+    oc new-build --image-stream=java:latest --binary=true --name=${{parameters.app_name}}
+    oc start-build ${{parameters.app_name}} --from-dir=build/libs/.
+    oc logs -f bc/${{parameters.app_name}}
+    oc new-app ${{parameters.app_name}} --as-deployment-config
+    oc expose svc ${{parameters.app_name}} --port=8080 --name=${{parameters.app_name}}
+  displayName: 'Build and Deploy the application on first runs..'
+  condition: eq('${{ parameters.firstRun }}', true)
+- script: |
+    oc login --token=${{parameters.ocp_token}} --server=${{parameters.ocp_server}} --insecure-skip-tls-verify=true
+    oc project ${{parameters.proj_name}}
+    oc start-build ${{parameters.app_name}} --from-dir=.
+    oc logs -f bc/${{parameters.app_name}}
+  displayName: 'Build and Deploy the application on subsequent runs..'
+  condition: eq('${{ parameters.firstRun }}', false)
