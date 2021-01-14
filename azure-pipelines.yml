@@ -25,15 +25,15 @@ parameters:
   type: string
   displayName: 'Openshift Application Name'
 - name: sonar_proj
-  default: 'dotnet'
+  default: 'gradle'
   type: string
   displayName: 'SonarQube Project'
 - name: sonar_token
-  default: 'token-here'
+  default: 'e6e41aba767c21d28aa0706a889ca4dcd8c0b09f'
   type: string
   displayName: 'SonarQube Token'
 - name: sonar_url
-  default: 'http://sonarqube....'
+  default: 'http://sonarqube-cicd.apps.cluster-894c.894c.sandbox1092.opentlc.com'
   type: string
   displayName: 'SonarQube Server URL'
 
