@@ -9,7 +9,7 @@ parameters:
   type: boolean
   displayName: 'First Run of this Pipeline'
 - name: ocp_token
-  default: ''
+  default: '29I-l62NhdKxixrt3EMXZXVhgKdu2FDVtYYyPxSveLU'
   type: string
   displayName: 'Openshift Auth Token'
 - name: ocp_server
