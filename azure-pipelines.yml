@@ -49,7 +49,7 @@ steps:
 
 - script: |
     gradle test
-    gradle sonarqube -Dsonar.projectKey={{parameters.sonar_proj}} -Dsonar.host.url={{parameters.sonar_url}} -Dsonar.login={{parameters.sonar_token}}
+    gradle sonarqube -Dsonar.projectKey=${{parameters.sonar_proj}} -Dsonar.host.url=${{parameters.sonar_url}} -Dsonar.login=${{parameters.sonar_token}}
     gradle bootjar
   displayName: 'Build, Scan and Package the application'
 - task: PublishTestResults@2
