@@ -41,7 +41,7 @@ trigger:
 - main
 
 pool:
-  name: 'ocp_pool'
+  name: 'ocp_pool_java8'
 
 steps:
 - script: echo Hello, world!
