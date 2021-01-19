@@ -57,7 +57,7 @@ steps:
     gradle bootjar
     gradle jacocoTestReport
     gradle jacocoTestCoverageVerification
-    ls build/jacoco/test/
+    ls -lR build/jacoco
   displayName: 'Build, Scan and Package the application'
 - task: PublishTestResults@2
   inputs:
