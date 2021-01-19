@@ -62,7 +62,10 @@ steps:
     testResultsFiles: '**/TEST-*.xml'
     testRunTitle: 'Publish'
   displayName: 'Publish Test Results'
-
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'JaCoCo'
+    summaryFileLocation: 'build/reports/jacoco/test/html/index.html'
 - script: |
     oc login --token=${{parameters.ocp_token}} --server=${{parameters.ocp_server}} --insecure-skip-tls-verify=true
     oc project ${{parameters.proj_name}}
