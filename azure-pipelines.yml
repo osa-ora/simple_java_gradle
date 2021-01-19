@@ -9,7 +9,7 @@ parameters:
   type: boolean
   displayName: 'First Run of this Pipeline'
 - name: ocp_token
-  default: '29I-l62NhdKxixrt3EMXZXVhgKdu2FDVtYYyPxSveLU'
+  default: 'pVrK4xod6e9hobWiUQxOk2ezEDxBTRX2r_RgsFSuw78'
   type: string
   displayName: 'Openshift Auth Token'
 - name: ocp_server
@@ -29,7 +29,7 @@ parameters:
   type: string
   displayName: 'SonarQube Project'
 - name: sonar_token
-  default: 'e6e41aba767c21d28aa0706a889ca4dcd8c0b09f'
+  default: '487cd3807fb368d2380d6dc8fcba817f9dec8242'
   type: string
   displayName: 'SonarQube Token'
 - name: sonar_url
@@ -49,7 +49,11 @@ steps:
 
 - script: |
     gradle test
+    export JAVA_HOME=/azp/jdk-11
+    export PATH=${BASE_PATH}:${JAVA_HOME}/bin
     gradle sonarqube -Dsonar.projectKey=${{parameters.sonar_proj}} -Dsonar.host.url=${{parameters.sonar_url}} -Dsonar.login=${{parameters.sonar_token}}
+    export JAVA_HOME=/azp/jdk1.8.0_271
+    export PATH=${BASE_PATH}:${JAVA_HOME}/bin
     gradle bootjar
   displayName: 'Build, Scan and Package the application'
 - task: PublishTestResults@2
