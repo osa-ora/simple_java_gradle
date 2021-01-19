@@ -68,8 +68,8 @@ steps:
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'JaCoCo'
-    summaryFileLocation: '${System.DefaultWorkingDirectory}/**/reports/jacoco/test/jacocoTestReport.xml'
-    reportDirectory: '${System.DefaultWorkingDirectory}/**/reports/jacoco/test/html'
+    summaryFileLocation: '{System.DefaultWorkingDirectory}/**/jacoco/test/jacocoTestReport.xml'
+    reportDirectory: '${System.DefaultWorkingDirectory}/**/jacoco/test/html'
 - script: |
     oc login --token=${{parameters.ocp_token}} --server=${{parameters.ocp_server}} --insecure-skip-tls-verify=true
     oc project ${{parameters.proj_name}}
