@@ -55,6 +55,9 @@ steps:
     export JAVA_HOME=/azp/jdk1.8.0_271
     export PATH=${BASE_PATH}:${JAVA_HOME}/bin
     gradle bootjar
+    gradle jacocoTestReport
+    gradle jacocoTestCoverageVerification
+    ls build/jacoco/test/html
   displayName: 'Build, Scan and Package the application'
 - task: PublishTestResults@2
   inputs:
@@ -65,7 +68,7 @@ steps:
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'JaCoCo'
-    summaryFileLocation: 'build/reports/jacoco/test/html/index.html'
+    summaryFileLocation: 'build/jacoco/test/html/index.html'
 - script: |
     oc login --token=${{parameters.ocp_token}} --server=${{parameters.ocp_server}} --insecure-skip-tls-verify=true
     oc project ${{parameters.proj_name}}
