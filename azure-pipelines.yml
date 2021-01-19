@@ -58,6 +58,7 @@ steps:
     gradle jacocoTestReport
     gradle jacocoTestCoverageVerification
     ls -lR build/jacoco
+    cat build/jacoco/test/jacocoTestReport.xml
   displayName: 'Build, Scan and Package the application'
 - task: PublishTestResults@2
   inputs:
@@ -68,8 +69,8 @@ steps:
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'JaCoCo'
-    summaryFileLocation: '{System.DefaultWorkingDirectory}/**/jacoco/test/jacocoTestReport.xml'
-    reportDirectory: '${System.DefaultWorkingDirectory}/**/jacoco/test/html'
+    summaryFileLocation: 'build/jacoco/test/jacocoTestReport.xml'
+    reportDirectory: 'build/jacoco/test/html'
 - script: |
     oc login --token=${{parameters.ocp_token}} --server=${{parameters.ocp_server}} --insecure-skip-tls-verify=true
     oc project ${{parameters.proj_name}}
