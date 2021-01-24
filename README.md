@@ -76,7 +76,8 @@ pipeline {
 	}
     agent {
     // Using the gradle builder agent
-       label "gradle-jenkins-slave"
+       label "jenkins-slave-gradle"
+       //"gradle-jenkins-slave"
     }
   stages {
     stage('Setup Parameters') {
