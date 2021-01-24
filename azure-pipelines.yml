@@ -9,11 +9,11 @@ parameters:
   type: boolean
   displayName: 'First Run of this Pipeline'
 - name: ocp_token
-  default: '0oNEsqmqW1iiJjJ7oseXLxiXtHpQvquFhTZz0Lc-Vrk'
+  default: '2kG5KDPEI2OxGUDnQtpkuxf9iUB6RLkytosiUQECZBo'
   type: string
   displayName: 'Openshift Auth Token'
 - name: ocp_server
-  default: 'https://api.cluster-894c.894c.sandbox1092.opentlc.com:6443'
+  default: 'https://api.cluster-66a1.66a1.sandbox1049.opentlc.com:6443'
   type: string
   displayName: 'Openshift Server URL'
 - name: proj_name
@@ -21,7 +21,7 @@ parameters:
   type: string
   displayName: 'Openshift Project Name'
 - name: app_name
-  default: 'sample-gradle'
+  default: 'gradle-app'
   type: string
   displayName: 'Openshift Application Name'
 - name: sonar_proj
@@ -86,3 +86,7 @@ steps:
     oc logs -f bc/${{parameters.app_name}}
   displayName: 'Build and Deploy the application on subsequent runs..'
   condition: eq('${{ parameters.firstRun }}', false)
+- script: |
+    sleep 15
+    curl $(oc get route ${{parameters.app_name}} -o jsonpath='{.spec.host}')/loyalty/v1/balance/123 | grep '123'
+  displayName: 'Smoke Test'
