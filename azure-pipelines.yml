@@ -8,6 +8,10 @@ parameters:
   default: false
   type: boolean
   displayName: 'First Run of this Pipeline'
+- name: sonarQubeRun
+  default: false
+  type: boolean
+  displayName: 'Run Sonar Qube Analysis'
 - name: ocp_token
   default: '2kG5KDPEI2OxGUDnQtpkuxf9iUB6RLkytosiUQECZBo'
   type: string
@@ -49,15 +53,18 @@ steps:
 
 - script: |
     gradle test
+    gradle bootjar
+    gradle jacocoTestReport
+    gradle jacocoTestCoverageVerification
+  displayName: 'Build, Test and Package the application'
+- script: |
     export JAVA_HOME=/azp/jdk-11
     export PATH=${BASE_PATH}:${JAVA_HOME}/bin
     gradle sonarqube -Dsonar.projectKey=${{parameters.sonar_proj}} -Dsonar.host.url=${{parameters.sonar_url}} -Dsonar.login=${{parameters.sonar_token}}
     export JAVA_HOME=/azp/jdk1.8.0_271
     export PATH=${BASE_PATH}:${JAVA_HOME}/bin
-    gradle bootjar
-    gradle jacocoTestReport
-    gradle jacocoTestCoverageVerification
-  displayName: 'Build, Scan and Package the application'
+  displayName: 'Run Sonar Qube Analysis'
+  condition: eq('${{ parameters.sonarQubeRun }}', true)
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
@@ -69,6 +76,11 @@ steps:
     codeCoverageTool: 'JaCoCo'
     summaryFileLocation: 'build/jacoco/test/jacocoTestReport.xml'
     reportDirectory: 'build/jacoco/test/html'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/build/libs'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
 - script: |
     oc login --token=${{parameters.ocp_token}} --server=${{parameters.ocp_server}} --insecure-skip-tls-verify=true
     oc project ${{parameters.proj_name}}
