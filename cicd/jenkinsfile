@@ -73,8 +73,8 @@ pipeline {
         sh "gradle clean build test"
         sh "gradle jacocoTestReport"
         sh "gradle jacocoTestCoverageVerification"
-        archiveArtifacts '**/TEST-*.xml'
-        archiveArtifacts 'build/jacoco/test/**/*.*'
+        junit '**/TEST-*.xml'
+        publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'build/jacoco/test/html', reportFiles: 'index.html', reportName: 'Unit Test Code Coverage', reportTitles: 'Code Coverage'])
       }
     }
     stage('Code Scanning by Sonar Qube') {
