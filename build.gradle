@@ -29,6 +29,15 @@ jacocoTestReport {
 	xml.enabled true
     }
 }
+jacocoTestCoverageVerification { 
+    violationRules { 
+        rule { 
+            limit { 
+                minimum = 0.6 
+            } 
+        } 
+    } 
+} 
 test {
 	useJUnitPlatform()
 	testLogging {
