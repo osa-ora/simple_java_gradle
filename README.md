@@ -228,8 +228,28 @@ Note the step jacocoTestCoverageVerification will fail if in build.gradle the mi
 Execution failed for task ':jacocoTestCoverageVerification'.
 > Rule violated for bundle demo: instructions covered ratio is 0.7, but expected minimum is 0.8
 ```
+You can also simulate a unit test failure by changing the assertion value in the Test class DemoApplicationTests.java and see the impact on failing the whole pipeline:
+```
+> Task :test
 
+DemoApplicationTests > testGetBalance2() PASSED
 
+DemoApplicationTests > testGetBalance() FAILED
+    org.opentest4j.AssertionFailedError at DemoApplicationTests.java:20
+
+DemoApplicationTests > contextLoads() PASSED
+2021-02-02 10:14:58.559  INFO 352 --- [extShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+
+3 tests completed, 1 failed
+
+> Task :test FAILED
+```
+Some people also use the following configurations in the build.gradle to make the test fail fast once a unit test failed to avoid executing the whole unit test cases:
+```
+test {
+    failFast = true
+}
+```
 ## 5) Deployment Across Environments
 
 Environments can be another Openshift project in the same Openshift cluster or in anither cluster.
