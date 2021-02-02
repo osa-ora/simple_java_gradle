@@ -223,6 +223,13 @@ The pipeline uses many parameters and in first execution it failed, then in subs
 
 <img width="1425" alt="Screen Shot 2021-01-28 at 13 01 16" src="https://user-images.githubusercontent.com/18471537/106132620-d7cf9580-616c-11eb-8dca-b3782320a436.png">
 
+Note the step jacocoTestCoverageVerification will fail if in build.gradle the minimum unit test coverage is configured with value more than 0.7
+```
+Execution failed for task ':jacocoTestCoverageVerification'.
+> Rule violated for bundle demo: instructions covered ratio is 0.7, but expected minimum is 0.8
+```
+
+
 ## 5) Deployment Across Environments
 
 Environments can be another Openshift project in the same Openshift cluster or in anither cluster.
