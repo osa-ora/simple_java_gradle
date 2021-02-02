@@ -17,7 +17,7 @@ class DemoApplicationTests {
         	LoyaltyController loyaltyController = new LoyaltyController();
         	String result = loyaltyController.getBalance(100);
 		System.out.println("Testing Balance 100, results="+result);
-        	assertEquals(result, "{\"account\":"+100+ ",\"balance\": 3000}");
+        	assertEquals(result, "{\"account\":"+101+ ",\"balance\": 3000}");
 		result = loyaltyController.getBalance(200);
                 System.out.println("Testing Balance 200, results="+result);
                 assertEquals(result, "{\"account\":"+200+ ",\"balance\": 3000}");
