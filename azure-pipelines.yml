@@ -45,7 +45,7 @@ trigger:
 - main
 
 pool:
-  name: 'ocp_pool_java8'
+  name: 'ocp_pool'
 
 steps:
 - script: echo Hello, world!
@@ -58,11 +58,12 @@ steps:
     gradle jacocoTestCoverageVerification
   displayName: 'Build, Test and Package the application'
 - script: |
-    export JAVA_HOME=/azp/jdk-11
-    export PATH=${BASE_PATH}:${JAVA_HOME}/bin
+    #this is only needed if we are not using Git but TFS (which works only with Oracle JDK8 & sonarqube needs Java 11)
+    #export JAVA_HOME=/azp/jdk-11
+    #export PATH=${BASE_PATH}:${JAVA_HOME}/bin
     gradle sonarqube -Dsonar.projectKey=${{parameters.sonar_proj}} -Dsonar.host.url=${{parameters.sonar_url}} -Dsonar.login=${{parameters.sonar_token}}
-    export JAVA_HOME=/azp/jdk1.8.0_271
-    export PATH=${BASE_PATH}:${JAVA_HOME}/bin
+    #export JAVA_HOME=/azp/jdk1.8.0_271
+    #export PATH=${BASE_PATH}:${JAVA_HOME}/bin
   displayName: 'Run Sonar Qube Analysis'
   condition: eq('${{ parameters.sonarQubeRun }}', true)
 - task: PublishTestResults@2
