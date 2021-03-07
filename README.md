@@ -27,7 +27,7 @@ oc logs bc/gradle-jenkins-slave -f
 
 oc new-app jenkins-persistent  -p MEMORY_LIMIT=2Gi  -p VOLUME_CAPACITY=4Gi -n cicd
 
-oc project dev //this is project for application development
+oc new-project dev //this is project for application development
 oc policy add-role-to-user edit system:serviceaccount:cicd:default -n dev
 oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n dev
 
