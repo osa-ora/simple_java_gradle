@@ -21,7 +21,7 @@ Run the following commands to build the environment and provision Jenkins and it
 ```
 oc project cicd //this is the project for cicd
 
-oc process -p GIT_URL=https://github.com/osa-ora/simple_java_gradle -p GIT_BRANCH=main -p GIT_CONTEXT_DIR=cicd -p DOCKERFILE_PATH=dockerfile_gradle -p IMAGE_NAME=gradle-jenkins-slave jenkins-slave-template  | oc create -f -
+oc process -f https://raw.githubusercontent.com/osa-ora/simple_java_gradle/main/cicd/bc_jenkins_slave_template.yaml -n cicd | oc create -f -
 oc start-build gradle-jenkins-slave 
 oc logs bc/gradle-jenkins-slave -f
 
