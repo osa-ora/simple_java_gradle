@@ -117,8 +117,6 @@ objects:
   spec:
     port:
       targetPort: 9000-tcp
-    tls:
-      termination: edge
     to:
       kind: Service
       name: ${APPLICATION_NAME}
