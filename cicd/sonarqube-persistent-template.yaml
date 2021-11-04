@@ -3,8 +3,8 @@ kind: Template
 metadata:
   name: "sonarqube-persistent"
   annotations:
-    description: SonarCube Persistent Template
-    openshift.io/display-name: SonarCube Community Template
+    description: SonarQube Persistent Template
+    openshift.io/display-name: SonarQube Community Template
     template.openshift.io/provider-display-name: Red Hat, Inc.  
     iconClass: "fas fa-dove"
 objects:
@@ -33,20 +33,20 @@ objects:
         containers:
         - name: sonarqube
           imagePullPolicy: Always
-          image: docker.io/sonarqube:8-community
+          image: docker.io/sonarqube:latest
           ports:
           - containerPort: 9000
             protocol: TCP
           volumeMounts:
-          - mountPath: /opt/sq/temp
+          - mountPath: /opt/sonarqube/temp
             name: sonarqube-temp
-          - mountPath: /opt/sq/conf
+          - mountPath: /opt/sonarqube/conf
             name: sonarqube-conf
-          - mountPath: /opt/sq/data
+          - mountPath: /opt/sonarqube/data
             name: sonarqube-data
-          - mountPath: /opt/sq/extensions
+          - mountPath: /opt/sonarqube/extensions
             name: sonarqube-extensions
-          - mountPath: /opt/sq/logs
+          - mountPath: /opt/sonarqube/logs
             name: sonarqube-logs
           livenessProbe:
             failureThreshold: 10
@@ -117,6 +117,8 @@ objects:
   spec:
     port:
       targetPort: 9000-tcp
+    tls:
+      termination: edge
     to:
       kind: Service
       name: ${APPLICATION_NAME}
